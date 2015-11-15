@@ -3,6 +3,7 @@ package parsers;
 import classes.Argument;
 import classes.Predicate;
 import classes.Variable;
+import enums.ArgumentType;
 
 public class PredicateParser {
 
@@ -30,27 +31,27 @@ public class PredicateParser {
 		return predicate;
 	}// end parse
 
-	private static int getArgumentType(String str) {
+	private static ArgumentType getArgumentType(String str) {
 		return getArgumentType(str.charAt(1));
 	}// end getArgumentType
 
-	private static int getArgumentType(char c) {
+	private static ArgumentType getArgumentType(char c) {
 		if (c == '(') {
-			return Argument.AGUMENT_PREDICATE;
+			return ArgumentType.PREDICATE;
 		} else if (c == ')' || c == ',') {
-			return Argument.AGUMENT_VARIABLE;
+			return ArgumentType.VARIABLE;
 		}// end else
 
-		return -1;
+		return ArgumentType.NONE;
 	}// end getArgumentType
 
 	private static Argument getArgument(String str) {
 		Argument arg = null;
-		int argumentType = getArgumentType(str);
-		if (argumentType == Argument.AGUMENT_PREDICATE) {
+		ArgumentType argumentType = getArgumentType(str);
+		if (argumentType == ArgumentType.PREDICATE) {
 			arg = new Predicate(str.charAt(0));
 
-		} else if (argumentType == Argument.AGUMENT_VARIABLE) {
+		} else if (argumentType == ArgumentType.VARIABLE) {
 			arg = new Variable(str.charAt(0));
 		}
 		return arg;
