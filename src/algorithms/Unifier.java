@@ -1,6 +1,6 @@
 package algorithms;
 
-import classes.Predicate;
+import unification.Predicate;
 
 public class Unifier {
 

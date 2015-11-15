@@ -1,4 +1,4 @@
-package classes;
+package unification;
 
 public class Variable extends Argument{
 

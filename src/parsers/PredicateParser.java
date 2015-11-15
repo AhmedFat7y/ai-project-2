@@ -1,8 +1,8 @@
 package parsers;
 
-import classes.Argument;
-import classes.Predicate;
-import classes.Variable;
+import unification.Argument;
+import unification.Predicate;
+import unification.Variable;
 import enums.ArgumentType;
 
 public class PredicateParser {

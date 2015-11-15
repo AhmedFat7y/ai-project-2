@@ -1,7 +1,7 @@
 package main;
 
 import parsers.PredicateParser;
-import classes.Predicate;
+import unification.Predicate;
 
 public class Main {
 	
