@@ -3,9 +3,11 @@ package clauseform;
 import enums.LogicalOperator;
 
 public class FunctionCallExpression extends Expression {
+	public String functionCall;
 
-	public FunctionCallExpression() {
-		// TODO Auto-generated constructor stub
+	public FunctionCallExpression(String funCall) {
+		super();
+		this.functionCall = funCall;
 	}
 
 	public FunctionCallExpression(LogicalOperator o) {

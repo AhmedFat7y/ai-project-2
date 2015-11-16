@@ -1,11 +1,13 @@
 package clauseform;
 
 import enums.LogicalOperator;
+import enums.Quantifier;
 
 public class QunatifiedExpression extends Expression {
-
-	public QunatifiedExpression() {
-		// TODO Auto-generated constructor stub
+	public Quantifier quantifier;
+	public QunatifiedExpression(Quantifier q) {
+		super();
+		this.quantifier = q;
 	}
 
 	public QunatifiedExpression(LogicalOperator o) {
