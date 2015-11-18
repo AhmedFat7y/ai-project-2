@@ -8,6 +8,7 @@ import enums.ArgumentType;
 public class PredicateParser {
 
 	public static Predicate parse(String str) {
+		str = str.replace(" ", "");
 		if (!str.contains("(")) {
 			return null;
 		}// endif
@@ -19,7 +20,8 @@ public class PredicateParser {
 				arg = parse(str.substring(i, str.length() - 1));
 				// i is pointing at begining of the arg-predicate
 				// we subtract 1 to account for th i+=2 in the for loop
-				// also to bybass the comma after the predicate and start from next argument
+				// also to bybass the comma after the predicate and start from
+				// next argument
 				// and to evade breaking from the loop.
 				i += arg.getNumberOfChars() - 1;
 			}// endif
