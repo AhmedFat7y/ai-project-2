@@ -81,6 +81,7 @@ public class Predicate extends Argument {
 
 	// replace arg1 with arg2
 	public void substitute(Argument arg1, Argument arg2) {
+		System.out.println("replace: " + arg1 + " with: " + arg2 +" in " + this);
 		for (int i = 0; i < arguments.size(); i++) {
 			Argument arg = arguments.get(i);
 			if (arg.equals(arg1)) {

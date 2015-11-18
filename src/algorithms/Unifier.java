@@ -29,19 +29,29 @@ public class Unifier {
 		for (int i = 0; i < predicate1.arguments.size(); i++) {
 			Argument arg1 = predicate1.arguments.get(i), arg2 = predicate2.arguments
 					.get(i);
+			System.out.println("match: " + arg1 + ", " + arg2);
 			UnificationPair pair = new UnificationPair(arg1, arg2);
 			if (!pair.isValid()) {
+				System.out.println("args are not valid pair");
+				System.out.println("unifying args failed");
 				return false;
 			} else if (pair.areEquals()) {
+				System.out.println("args are equal");
 				continue;
 			} else if (pair.canSubstitute()) {
+				System.out.println("can be substituted");
 				if (!substitute(pair)) {
+					System.out.println("unifying args failed");
 					return false;
 				}
 			} else if (pair.arePredicates()) {
+				System.out.println("args are both predicates");
 				if (!_unify((Predicate) arg1, (Predicate) arg2)) {
+					System.out.println("unifying args failed");
 					return false;
 				}
+			} else {
+				System.out.println("sth wrong happened");
 			}
 		}
 		return true;
@@ -49,6 +59,8 @@ public class Unifier {
 
 	private boolean substitute(UnificationPair pair) {
 		if (substitutes.containsKey(pair.arg1)) {
+			System.out.println(pair.arg1 + " already substitued");
+			System.out.println("substitution failed");
 			return false;
 		}
 		substitutes.put(pair.arg1, pair.arg2);
@@ -56,6 +68,7 @@ public class Unifier {
 		this.predicate2.substitute(pair.arg1, pair.arg2);
 		return true;
 	}
+	
 	// public boolean unify() {
 	// pairTerms();
 	// for (UnificationPair pair : new ArrayList<>(pairs)) {
@@ -93,13 +106,22 @@ public class Unifier {
 }
 
 class UnificationPair {
-	public Argument arg1;
-	public Argument arg2;
+	public Argument arg1;// to be replaced
+	public Argument arg2; // replacement
 
 	// handle case 1, 4
 	public UnificationPair(Argument arg1, Argument arg2) {
-		this.arg1 = arg1 instanceof Variable ? arg1 : arg2;
-		this.arg2 = arg1 instanceof Variable ? arg2 : arg1;
+		if (arg1 instanceof Variable && ((Variable) arg1).isConstant) {
+			this.arg1 = arg1;
+			this.arg2 = arg2;
+		} else if (arg2 instanceof Variable && ((Variable) arg2).isConstant) {
+			this.arg1 = arg2;
+			this.arg2 = arg1;
+		} else {
+			this.arg1 = arg1 instanceof Variable ? arg1 : arg2;
+			this.arg2 = arg1 instanceof Variable ? arg2 : arg1;
+		}
+
 	}
 
 	// handle cases 6, 2,

@@ -1,9 +1,11 @@
 package unification;
 
 public class Variable extends Argument {
+	public boolean isConstant;
 
 	public Variable(char symbol) {
 		super(symbol);
+		isConstant = Character.isUpperCase(symbol);
 	}
 
 	@Override
