@@ -2,32 +2,32 @@ package algorithms;
 
 import java.util.HashMap;
 
-import unification.Argument;
-import unification.Predicate;
-import unification.Variable;
+import models.Argument;
+import models.FunctionCallExpression;
+import models.Variable;
 
 public class Unifier {
 
-	public Predicate predicate1;
-	public Predicate predicate2;
+	public FunctionCallExpression FunctionCallExpression1;
+	public FunctionCallExpression FunctionCallExpression2;
 	// public ArrayList<UnificationPair> pairs;
 	public HashMap<Argument, Argument> substitutes;
 
-	public Unifier(Predicate predicate1, Predicate predicate2) {
-		this.predicate1 = predicate1;
-		this.predicate2 = predicate2;
+	public Unifier(FunctionCallExpression FunctionCallExpression1, FunctionCallExpression FunctionCallExpression2) {
+		this.FunctionCallExpression1 = FunctionCallExpression1;
+		this.FunctionCallExpression2 = FunctionCallExpression2;
 		// this.pairs = new ArrayList<>();
 		substitutes = new HashMap<>();
 	}
 
 	public boolean unify() {
-		return _unify(predicate1, predicate2);
+		return _unify(FunctionCallExpression1, FunctionCallExpression2);
 
 	}
 
-	private boolean _unify(Predicate predicate1, Predicate predicate2) {
-		for (int i = 0; i < predicate1.arguments.size(); i++) {
-			Argument arg1 = predicate1.arguments.get(i), arg2 = predicate2.arguments
+	private boolean _unify(FunctionCallExpression FunctionCallExpression1, FunctionCallExpression FunctionCallExpression2) {
+		for (int i = 0; i < FunctionCallExpression1.arguments.size(); i++) {
+			Argument arg1 = FunctionCallExpression1.arguments.get(i), arg2 = FunctionCallExpression2.arguments
 					.get(i);
 			System.out.println("match: " + arg1 + ", " + arg2);
 			UnificationPair pair = new UnificationPair(arg1, arg2);
@@ -44,9 +44,9 @@ public class Unifier {
 					System.out.println("unifying args failed");
 					return false;
 				}
-			} else if (pair.arePredicates()) {
-				System.out.println("args are both predicates");
-				if (!_unify((Predicate) arg1, (Predicate) arg2)) {
+			} else if (pair.areFunctionCallExpressions()) {
+				System.out.println("args are both FunctionCallExpressions");
+				if (!_unify((FunctionCallExpression) arg1, (FunctionCallExpression) arg2)) {
 					System.out.println("unifying args failed");
 					return false;
 				}
@@ -64,8 +64,8 @@ public class Unifier {
 			return false;
 		}
 		substitutes.put(pair.arg1, pair.arg2);
-		this.predicate1.substitute(pair.arg1, pair.arg2);
-		this.predicate2.substitute(pair.arg1, pair.arg2);
+		this.FunctionCallExpression1.substitute(pair.arg1, pair.arg2);
+		this.FunctionCallExpression2.substitute(pair.arg1, pair.arg2);
 		return true;
 	}
 	
@@ -85,14 +85,14 @@ public class Unifier {
 	//
 	//
 	// private void pairTerms() {
-	// _pairTerms(predicate1, predicate2);
+	// _pairTerms(FunctionCallExpression1, FunctionCallExpression2);
 	// }
 	//
-	// private void _pairTerms(Predicate p1, Predicate p2) {
+	// private void _pairTerms(FunctionCallExpression p1, FunctionCallExpression p2) {
 	// for (int i = 0; i < p1.arguments.size(); i++) {
 	// Argument arg1 = p1.arguments.get(i), arg2 = p2.arguments.get(i);
-	// if (arg1 instanceof Predicate && arg2 instanceof Predicate) {
-	// _pairTerms((Predicate) arg1, (Predicate) arg2);
+	// if (arg1 instanceof FunctionCallExpression && arg2 instanceof FunctionCallExpression) {
+	// _pairTerms((FunctionCallExpression) arg1, (FunctionCallExpression) arg2);
 	// } else {
 	// pairs.add(new UnificationPair(arg1, arg2));
 	// }
@@ -137,10 +137,10 @@ class UnificationPair {
 	// handle case 5
 	public boolean canSubstitute() {
 		return arg1 instanceof Variable
-				&& (!(arg2 instanceof Predicate) || arg1.match(arg2));
+				&& (!(arg2 instanceof FunctionCallExpression) || arg1.match(arg2));
 	}
 
-	public boolean arePredicates() {
-		return arg1 instanceof Predicate && arg2 instanceof Predicate;
+	public boolean areFunctionCallExpressions() {
+		return arg1 instanceof FunctionCallExpression && arg2 instanceof FunctionCallExpression;
 	}
 }

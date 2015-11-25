@@ -1,31 +1,30 @@
-package unification;
+package models;
 
 public class Variable extends Argument {
 	public boolean isConstant;
 
 	public Variable(char symbol) {
 		super(symbol);
-		isConstant = Character.isUpperCase(symbol);
+		isConstant = symbol >= 'a' && symbol <= 'd';
 	}
 
 	@Override
 	public int getNumberOfChars() {
-		// TODO Auto-generated method stub
 		return 2;
 	}
 
 	/**
 	 * checks if otherArgument is variable then it compares symbols checks if
-	 * otherArgument is predicate then it checks if this predicate contains this
+	 * otherArgument is FunctionCallExpression then it checks if this FunctionCallExpression contains this
 	 * variable if it contains this variable then returns false;
 	 * **/
 	@Override
 	public boolean match(Argument otherArgument) {
 		if (otherArgument instanceof Variable) {
 			return super.match(otherArgument);
-		} else if (otherArgument instanceof Predicate) {
-			Predicate p = (Predicate) otherArgument;
-			return !p.hasVariable(SYMBOL);
+		} else if (otherArgument instanceof FunctionCallExpression) {
+			FunctionCallExpression p = (FunctionCallExpression) otherArgument;
+			return !p.hasVariable(symbol);
 		}
 		return false;
 	}
@@ -34,7 +33,7 @@ public class Variable extends Argument {
 	public boolean equals(Object other) {
 		if (other instanceof Variable) {
 			Variable otherVariable = (Variable) other;
-			return this.SYMBOL == otherVariable.SYMBOL;
+			return this.symbol == otherVariable.symbol;
 		}
 
 		return false;

@@ -1,8 +1,8 @@
 package main;
 
+import models.FunctionCallExpression;
+import parsers.Parser;
 import algorithms.Unifier;
-import parsers.PredicateParser;
-import unification.Predicate;
 
 public class Main {
 
@@ -10,8 +10,8 @@ public class Main {
 		System.out.println("hello world!");
 		String u1 = "p(a,X,h(g(Z)))";
 		String u2 = "p(Z,h(Y),h(Y))";
-		Predicate p1 = PredicateParser.parse(u1);
-		Predicate p2 = PredicateParser.parse(u2);
+		FunctionCallExpression p1 = Parser.parse(u1);
+		FunctionCallExpression p2 = Parser.parse(u2);
 		System.out.println(p1);
 		System.out.println("Result == Input? " + p1.toString().equals(u1));
 		System.out.println(p2);

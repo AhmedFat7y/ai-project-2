@@ -3,21 +3,19 @@
  */
 package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
+import models.FunctionCallExpression;
 
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
+import parsers.Parser;
 import algorithms.Unifier;
-import parsers.PredicateParser;
-import unification.Predicate;
 
 /**
  * @author MacBookAir
@@ -43,18 +41,18 @@ public class UnificationTest {
 	@Test
 	public void test() {
 		for (CaseWrapper caseWrapper : cases) {
-			Predicate p1 = PredicateParser.parse(caseWrapper.input1);
-			Predicate p2 = PredicateParser.parse(caseWrapper.input2);
+			FunctionCallExpression p1 = Parser.parse(caseWrapper.input1);
+			FunctionCallExpression p2 = Parser.parse(caseWrapper.input2);
 			assertEquals("Parsing " + caseWrapper.input1 + " ended up to be: "
 					+ p1, caseWrapper.input1, p1.toString());
 			assertEquals("Parsing " + caseWrapper.input2 + " ended up to be: "
 					+ p2, caseWrapper.input2, p2.toString());
 			Unifier u = new Unifier(p1, p2);
 			if (caseWrapper.areUnifiable) {
-				assertTrue("Predicates: " + p1 + ", " + p2
+				assertTrue("FunctionCallExpressions: " + p1 + ", " + p2
 						+ " should be unifiable", u.unify());
 			} else {
-				assertFalse("Predicates: " + p1 + ", " + p2
+				assertFalse("FunctionCallExpressions: " + p1 + ", " + p2
 						+ " cannot be unified", u.unify());
 			}
 

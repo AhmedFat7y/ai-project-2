@@ -1,5 +1,5 @@
 package enums;
 
 public enum ArgumentType {
-	NONE, PREDICATE, VARIABLE
+	NONE, VARIABLE, FUNCTION_CALL
 }

@@ -1,13 +1,15 @@
-package clauseform;
+package models;
 
 import enums.LogicalOperator;
 import enums.Quantifier;
 
 public class QunatifiedExpression extends Expression {
 	public Quantifier quantifier;
-	public QunatifiedExpression(Quantifier q) {
+	public char[] symbols;
+	public QunatifiedExpression(Quantifier q, char[] symbols) {
 		super();
 		this.quantifier = q;
+		this.symbols = symbols;
 	}
 
 	public QunatifiedExpression(LogicalOperator o) {

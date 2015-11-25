@@ -1,4 +1,4 @@
-package clauseform;
+package models;
 
 import enums.LogicalOperator;
 
