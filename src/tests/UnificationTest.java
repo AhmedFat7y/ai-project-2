@@ -41,8 +41,10 @@ public class UnificationTest {
 	@Test
 	public void test() {
 		for (CaseWrapper caseWrapper : cases) {
-			FunctionCallExpression p1 = Parser.parse(caseWrapper.input1);
-			FunctionCallExpression p2 = Parser.parse(caseWrapper.input2);
+			FunctionCallExpression p1 = Parser
+					.parseFunctionCall(caseWrapper.input1);
+			FunctionCallExpression p2 = Parser
+					.parseFunctionCall(caseWrapper.input2);
 			assertEquals("Parsing " + caseWrapper.input1 + " ended up to be: "
 					+ p1, caseWrapper.input1, p1.toString());
 			assertEquals("Parsing " + caseWrapper.input2 + " ended up to be: "

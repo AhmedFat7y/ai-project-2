@@ -1,5 +1,5 @@
 package enums;
 
 public enum Quantifier {
-	THERE_EXISTS, FOR_ALL
+	NONE, THERE_EXISTS, FOR_ALL
 }

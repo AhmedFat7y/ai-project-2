@@ -2,20 +2,37 @@ package models;
 
 import enums.LogicalOperator;
 
-public class EmptyExpression extends Expression {
+public class EmptyExpression extends GroupExpression {
 
 	public EmptyExpression() {
-		// TODO Auto-generated constructor stub
+		this(LogicalOperator.NONE, null, false);
 	}
 
 	public EmptyExpression(LogicalOperator o) {
-		super(o);
-		// TODO Auto-generated constructor stub
+		this(o, null, false);
+
 	}
 
 	public EmptyExpression(LogicalOperator o, Expression e, boolean isNegated) {
 		super(o, e, isNegated);
-		// TODO Auto-generated constructor stub
 	}
 
+	@Override
+	public int getNumberOfChars() {
+		if (operators.size() == 0) {
+			return 0;
+		}
+		int result = 2; // paranthesis
+		result += super.getNumberOfChars();
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		String result = getNegationChar();
+		result += '(';
+		result += super.toString();
+		result += ')';
+		return result;
+	}
 }

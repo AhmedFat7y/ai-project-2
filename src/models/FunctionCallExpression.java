@@ -10,6 +10,7 @@ public class FunctionCallExpression extends Argument {
 	
 	public FunctionCallExpression(char symbol) {
 		super(symbol);
+		this.arguments = new ArrayList<>();
 	}
 
 	public FunctionCallExpression(LogicalOperator o) {
@@ -66,8 +67,7 @@ public class FunctionCallExpression extends Argument {
 	
 	@Override
 	public int getNumberOfChars() {
-		int result = 2; // for first symbol and opening paren => 'p('
-
+		int result = 2 + super.getNumberOfChars() ; // for first symbol and opening paren => 'p('
 		// for inner arguments
 		for (Argument argument : arguments) {
 			result += argument.getNumberOfChars();

@@ -24,7 +24,7 @@ public abstract class Argument extends Expression{
 	
 	@Override
 	public String toString() {
-		return "" + symbol;
+		return super.toString() + symbol;
 	}
 
 	// handle case 2, 5, 6
@@ -37,6 +37,4 @@ public abstract class Argument extends Expression{
 		Argument otherArgument = (Argument) other;
 		return this.symbol == otherArgument.symbol;
 	}
-
-	abstract public int getNumberOfChars();
 }
