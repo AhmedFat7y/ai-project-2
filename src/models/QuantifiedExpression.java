@@ -51,7 +51,7 @@ public class QuantifiedExpression extends GroupExpression {
 	@Override
 	public int getNumberOfChars() {
 		// for opened & closed square bracket
-		int result = 2;
+		int result = 0;
 		result += quantifiers.size();
 		for (QuantifierWrapper qw : quantifiers) {
 			result += (qw.symbols.length * 2) - 1;

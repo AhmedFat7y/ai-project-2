@@ -22,7 +22,7 @@ public class EmptyExpression extends GroupExpression {
 		if (operators.size() == 0) {
 			return 0;
 		}
-		int result = 2; // paranthesis
+		int result = 0;
 		result += super.getNumberOfChars();
 		return result;
 	}

@@ -28,9 +28,17 @@ public class Main {
 		Expression e3 = Parser.parse(cnf3);
 		Expression e4 = Parser.parse(cnf4);
 		System.out.println("Input is: " + cnf1 + ", Output is: " + e1);
+		System.out.println("Are the same?: "
+				+ cnf1.replace(" ", "").equals(e1.toString()));
 		System.out.println("Input is: " + cnf2 + ", Output is: " + e2);
+		System.out.println("Are the same?: "
+				+ cnf2.replace(" ", "").equals(e2.toString()));
 		System.out.println("Input is: " + cnf3 + ", Output is: " + e3);
+		System.out.println("Are the same?: "
+				+ cnf3.replace(" ", "").equals(e3.toString()));
 		System.out.println("Input is: " + cnf4 + ", Output is: " + e4);
+		System.out.println("Are the same?: "
+				+ cnf4.replace(" ", "").equals(e4.toString()));
 
 		// System.out.println(Arrays.asList("x,g(x),g(f(a))".split("\\w[^\\(].*?,.*?[^\\)]")));
 	}

@@ -4,6 +4,7 @@ import models.Argument;
 import models.EmptyExpression;
 import models.Expression;
 import models.FunctionCallExpression;
+import models.GroupExpression;
 import models.QuantifiedExpression;
 
 public class Parser {
@@ -12,10 +13,17 @@ public class Parser {
 		str = str.replace(" ", "");
 		System.out.println("Parse: " + str);
 		Expression e = null;
+		boolean negation = false;
 		for (int i = 0; i < str.length() - 1; i += 2) {
-			char first = str.charAt(i), second = str.charAt(i + 1);
-			if (SymbolsChecker.isQuantifier(str.charAt(i))) {
+			char first = str.charAt(i);
+			// char second = str.charAt(i + 1);
+			if (SymbolsChecker.isNegation(first)) {
+				negation = true;
+				i--;
+				continue;
+			} else if (SymbolsChecker.isQuantifier(first)) {
 				e = parseQuantifiers(str.substring(i));
+				e.isNegated = negation;
 			} else {
 				throw new Exception("Unexpected Charatcer: " + first
 						+ ", index: " + i + "str: " + str);
@@ -29,21 +37,17 @@ public class Parser {
 	public static QuantifiedExpression parseQuantifiers(String str)
 			throws Exception {
 		System.out.println("Parse Quantifier: " + str);
-		boolean scopeStarted = false;
-		boolean negation = false;
+		// boolean scopeStarted = false;
+
 		QuantifiedExpression qe = new QuantifiedExpression();
-		for (int i = 0; i < str.length() - 1; i += 2) {
-			System.out.println("loop-start: " + str.charAt(i));
+		qe.isNegated = SymbolsChecker.isNegation(str.charAt(0));
+
+		for (int i = qe.isNegated ? 1 : 0; i < str.length() - 1; i += 2) {
+
 			char first = str.charAt(i), second = str.charAt(i + 1);
 			Expression e = new EmptyExpression();
 			if (SymbolsChecker.isQuantifier(first)) {
-				if (scopeStarted) {
-					e = parseQuantifiers(str.substring(i));
-					qe.addExpression(e);
-				} else {
-					qe.addQuantifier(SymbolsChecker.getQuantifier(first),
-							second);
-				}
+				qe.addQuantifier(SymbolsChecker.getQuantifier(first), second);
 			} else if (SymbolsChecker.isComma(first)) {
 				if (Character.isLetter(second)) {
 					qe.addSymbol(second);
@@ -51,40 +55,63 @@ public class Parser {
 					throw new Exception("Unexpected comma");
 				}
 			} else if (SymbolsChecker.isOpenedSquareBracket(first)) {
-				scopeStarted = true;
-				i--;
+				e = parseGroupExpression(str.substring(i + 1));
+				qe.expressions = ((GroupExpression) e).expressions;
+				qe.operators = ((GroupExpression) e).operators;
 			} else if (SymbolsChecker.isClosedSquareBracket(first)) {
 				return qe;
-			} else if (Character.isLetter(first)) {
-				e = parseFunctionCall(str.substring(i));
-				qe.addExpression(e);
-				i -= 2;
-			} else if (SymbolsChecker.isOperator(first)) {
-				qe.addOperator(SymbolsChecker.getOperator(first));
-				i--;
-			} else if (SymbolsChecker.isNegation(first)) {
-				negation = true;
-				i--;
-				continue; // skip the falsifying of negation flag
 			} else if (SymbolsChecker.isOpenedParantheses(first)) {
-				e = parseGroupExpression(str.substring(i));
+				e = parseGroupExpression(str.substring(i + 1));
 				qe.addExpression(e);
+			} else if (SymbolsChecker.isClosedParantheses(first)) {
+				i--;
+				continue;
 			}
-			e.isNegated = negation;
-			negation = false;
+			// e.isNegated = negation;
+			// negation = false;
 			i += e.getNumberOfChars();
-			System.out.println("loop-end: " + str.charAt(i));
+
 		}
 		return qe;
 	}
 
-	public static Expression parseGroupExpression(String str) {
-		Expression e = null;
-		char first = str.charAt(1);
-		if (Character.isLetter(first)) {
-			
+	public static Expression parseGroupExpression(String str) throws Exception {
+		boolean negation = false;
+		GroupExpression ge = new GroupExpression();
+		for (int i = 0; i < str.length() - 1; i += 2) {
+			Expression e = new EmptyExpression();
+			char first = str.charAt(i);
+//			char second = str.charAt(i + 1);
+			if (SymbolsChecker.isQuantifier(first)) {
+				e = parseQuantifiers(str.substring(i));
+				ge.addExpression(e);
+			} else if (Character.isLetter(first)) {
+				e = parseFunctionCall(str.substring(i));
+				ge.addExpression(e);
+				i -= 2;
+			} else if (SymbolsChecker.isOperator(first)) {
+				ge.addOperator(SymbolsChecker.getOperator(first));
+				i--;
+			}
+			if (SymbolsChecker.isOpenedParantheses(first)) { // empty expression
+				GroupExpression tempGE = (GroupExpression) parseGroupExpression(str
+						.substring(i + 1));
+
+				EmptyExpression tempEE = new EmptyExpression();
+				e = tempEE;
+				tempEE.operators = tempGE.operators;
+				tempEE.expressions = tempGE.expressions;
+				ge.addExpression(e);
+			} else if (SymbolsChecker.isNegation(first)) {
+				negation = true;
+				i--;
+				continue; // skip the falsifying of negation flag
+			}
+			e.isNegated = negation;
+			negation = false;
+			i += e.getNumberOfChars();
 		}
-		return e;
+		return ge;
 	}
 
 	public static FunctionCallExpression parseFunctionCall(String str) {

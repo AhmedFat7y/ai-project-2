@@ -13,8 +13,8 @@ import enums.LogicalOperator;
  *
  */
 public class GroupExpression extends Expression {
-	ArrayList<Expression> expressions;
-	ArrayList<LogicalOperator> operators;
+	public ArrayList<Expression> expressions;
+	public ArrayList<LogicalOperator> operators;
 
 	/**
 	 * 
@@ -56,6 +56,7 @@ public class GroupExpression extends Expression {
 	@Override
 	public int getNumberOfChars() {
 		int result = super.getNumberOfChars();
+		result += 2; // brackets;
 		result += operators.size();
 		for (Expression e : this.expressions) {
 			result += e.getNumberOfChars();
