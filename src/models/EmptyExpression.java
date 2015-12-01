@@ -8,6 +8,10 @@ public class EmptyExpression extends GroupExpression {
 		this(LogicalOperator.NONE, null, false);
 	}
 
+	public EmptyExpression(GroupExpression ge) {
+		super(ge);
+	}
+
 	public EmptyExpression(LogicalOperator o) {
 		this(o, null, false);
 
@@ -34,5 +38,10 @@ public class EmptyExpression extends GroupExpression {
 		result += super.toString();
 		result += ')';
 		return result;
+	}
+
+	@Override
+	public Expression shallowCopy() {
+		return new EmptyExpression(this);
 	}
 }

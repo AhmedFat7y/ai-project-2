@@ -3,8 +3,8 @@ package models;
 import enums.LogicalOperator;
 
 public abstract class Expression {
-//	public LogicalOperator operator;
-//	public Expression otherExpression;
+	// public LogicalOperator operator;
+	// public Expression otherExpression;
 	public boolean isNegated;
 
 	public Expression() {
@@ -28,5 +28,11 @@ public abstract class Expression {
 	@Override
 	public String toString() {
 		return isNegated ? "¬" : "";
+	}
+
+	public abstract Expression shallowCopy();
+
+	public void negate() {
+		this.isNegated = !this.isNegated;
 	}
 }

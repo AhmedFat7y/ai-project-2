@@ -14,6 +14,11 @@ public class QuantifiedExpression extends GroupExpression {
 		this(LogicalOperator.NONE, null, false);
 	}
 
+	public QuantifiedExpression(QuantifiedExpression qe) {
+		super(qe);
+		this.quantifiers = new ArrayList<>(qe.quantifiers);
+	}
+
 	public QuantifiedExpression(LogicalOperator o) {
 		this(o, null, false);
 	}
@@ -75,4 +80,8 @@ public class QuantifiedExpression extends GroupExpression {
 		}
 	}// end QuantifierWrapper
 
+	@Override
+	public Expression shallowCopy() {
+		return new QuantifiedExpression(this);
+	}
 }

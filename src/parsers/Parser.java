@@ -10,6 +10,7 @@ import models.QuantifiedExpression;
 public class Parser {
 
 	public static Expression parse(String str) throws Exception {
+		str = str.replace(" ", "");
 		System.out.println("Parse: " + str);
 		Expression e = null;
 		boolean negation = false;
@@ -27,7 +28,7 @@ public class Parser {
 				throw new Exception("Unexpected Charatcer: " + first
 						+ ", index: " + i + "str: " + str);
 			}
-			System.out.println("Expression found: " + e);
+//			System.out.println("Expression found: " + e);
 			i += e.getNumberOfChars();
 		}
 		return e;
@@ -35,7 +36,7 @@ public class Parser {
 
 	public static QuantifiedExpression parseQuantifiers(String str)
 			throws Exception {
-		System.out.println("Parse Quantifier: " + str);
+//		System.out.println("Parse Quantifier: " + str);
 		// boolean scopeStarted = false;
 
 		QuantifiedExpression qe = new QuantifiedExpression();
@@ -114,7 +115,7 @@ public class Parser {
 	}
 
 	public static FunctionCallExpression parseFunctionCall(String str) {
-		System.out.println("Parse Function Call: " + str);
+//		System.out.println("Parse Function Call: " + str);
 		if (!str.contains("(")) {
 			return null;
 		}// endif

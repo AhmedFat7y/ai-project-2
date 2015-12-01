@@ -109,4 +109,10 @@ public class GroupExpression extends Expression {
 		this.expressions = new ArrayList<>(ge.expressions);
 		this.operators = new ArrayList<>(ge.operators);
 	}
+	
+	@Override
+	public Expression shallowCopy() {
+		return new GroupExpression(this);
+	}
+
 }

@@ -70,8 +70,8 @@ public class SymbolsChecker {
 
 	public static LogicalOperator getOperator(char c) {
 		switch (c) {
-		case ' ':
-			return LogicalOperator.NONE;
+		case '|':
+			return LogicalOperator.OR;
 		case '⇔':
 			return LogicalOperator.IFF;
 		case '∧':
@@ -132,7 +132,7 @@ public class SymbolsChecker {
 		case NONE:
 			return 0;
 		case OR:
-			return '∧';
+			return '|';
 		}
 		return 0;
 

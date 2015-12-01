@@ -8,6 +8,12 @@ public class FunctionCallExpression extends Argument {
 
 	public ArrayList<Argument> arguments;
 
+	public FunctionCallExpression(FunctionCallExpression fe) {
+		super(fe.symbol);
+		this.arguments = new ArrayList<>(fe.arguments);
+		this.isNegated = fe.isNegated;
+	}
+
 	public FunctionCallExpression(char symbol) {
 		super(symbol);
 		this.arguments = new ArrayList<>();
@@ -52,8 +58,8 @@ public class FunctionCallExpression extends Argument {
 
 	// replace arg1 with arg2
 	public void substitute(Argument arg1, Argument arg2) {
-		System.out.println("-------- replace: " + arg1 + " with " + arg2 + " in "
-				+ this);
+		System.out.println("-------- replace: " + arg1 + " with " + arg2
+				+ " in " + this);
 		for (int i = 0; i < arguments.size(); i++) {
 			Argument arg = arguments.get(i);
 			if (arg.equals(arg1)) {
@@ -112,9 +118,13 @@ public class FunctionCallExpression extends Argument {
 				}
 				return true;
 			}
-			return false;
 		}
 
 		return false;
 	}// end equals
+
+	@Override
+	public Expression shallowCopy() {
+		return new FunctionCallExpression(this);
+	}
 }
