@@ -47,7 +47,7 @@ public class CNFConverter {
 				+ this.expression);
 		skolemize(this.expression, null);
 		System.out.println("After skolemizing: " + this.expression);
-		
+
 		removeUniversal(expression);
 		System.out.println("After dropping universals: " + this.expression);
 	}
@@ -252,7 +252,7 @@ public class CNFConverter {
 			tempParent = (QuantifiedExpression) ge;
 		}
 		for (Expression e : ge.expressions) {
-			if (e instanceof QuantifiedExpression) {
+			if (e instanceof GroupExpression) {
 				skolemize((GroupExpression) e, tempParent);
 			}
 		}
