@@ -181,7 +181,7 @@ public class CNFConverter {
 
 		if (ge instanceof QuantifiedExpression) {
 			QuantifiedExpression qe = (QuantifiedExpression) ge;
-			if(qe.toString().equals("∃y[¬Q(y)|¬R(y,x)]")) {
+			if (qe.toString().equals("∃y[¬Q(y)|¬R(y,x)]")) {
 				System.out.println("im here");
 			}
 			_standardizeQuantifiers(qe);
@@ -229,21 +229,24 @@ public class CNFConverter {
 	}
 
 	public void skolemize(GroupExpression ge) {
+		QuantifiedExpression parent = null;
 		for (Expression e : ge.expressions) {
 			if (e instanceof QuantifiedExpression) {
+				if (((QuantifiedExpression) e).hasUniversal()) {
+					parent = (QuantifiedExpression) e;
+				}
 				skolemize((GroupExpression) e);
 			}
 		}
 		if (ge instanceof QuantifiedExpression
 				&& ((QuantifiedExpression) ge).hasExistential()) {
-			_skolemize((QuantifiedExpression) ge);
+			_skolemize((QuantifiedExpression) ge, parent);
 		}
 	}
 
 	private void _skolemize(QuantifiedExpression qe) {
 		Character[] symbolsE = qe.getExistentialQuantifiersSymbols();
 		Character[] symbolsA = qe.getUniversalQuantifiersSymbols();
-
 		for (char c : symbolsE) {
 			for (FunctionCallExpression fe : qe.funExpressions) {
 				if (fe.hasVariable(c)) {
