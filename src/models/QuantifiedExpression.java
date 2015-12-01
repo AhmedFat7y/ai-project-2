@@ -158,4 +158,22 @@ public class QuantifiedExpression extends GroupExpression {
 			}
 		}
 	}
+
+	public void removeExistentialQuantifiers() {
+
+		for (QuantifierWrapper qw : new ArrayList<>(this.quantifiers)) {
+			if (qw.quantifier == Quantifier.THERE_EXISTS) {
+				this.quantifiers.remove(qw);
+			}
+		}
+	}
+
+	public void removeUniversalQuantifiers() {
+
+		for (QuantifierWrapper qw : new ArrayList<>(this.quantifiers)) {
+			if (qw.quantifier == Quantifier.FOR_ALL) {
+				this.quantifiers.remove(qw);
+			}
+		}
+	}
 }

@@ -12,6 +12,7 @@ import models.GroupExpression;
 import models.QuantifiedExpression;
 import models.Variable;
 import enums.LogicalOperator;
+import enums.Quantifier;
 
 public class CNFConverter {
 	public GroupExpression expression;
@@ -44,8 +45,11 @@ public class CNFConverter {
 		standardizeQuantifiers(this.expression);
 		System.out.println("After standardizing quantifiers: "
 				+ this.expression);
-		skolemize(this.expression);
+		skolemize(this.expression, null);
 		System.out.println("After skolemizing: " + this.expression);
+		
+		removeUniversal(expression);
+		System.out.println("After dropping universals: " + this.expression);
 	}
 
 	private void serialize(GroupExpression ge) {
@@ -159,22 +163,22 @@ public class CNFConverter {
 
 	private void _pushNegation(GroupExpression ge) {
 		if (ge instanceof QuantifiedExpression) {
-			if (ge.operators.get(0) == Quantifier.THERE_EXISTS) {
-				ge.operators.set(0, Quantifier.FOR_ALL);
-			} else if(ge.operators.get(0) == Quantifier.FOR_ALL) {
-				ge.operators.set(0, Quantifier.THERE_EXISTS);
-			}
-			for (int i = 0; i < ge.operators.size; i++) {
-				ge.operators.get(i).negate();
-			}
-			ge.negate();
-		}
-		else {
+			// if (ge.operators.get(0) == Quantifier.THERE_EXISTS) {
+			// ge.operators.set(0, Quantifier.FOR_ALL);
+			// } else if (ge.operators.get(0) == Quantifier.FOR_ALL) {
+			// ge.operators.set(0, Quantifier.THERE_EXISTS);
+			// }
+			// for (int i = 0; i < ge.operators.size; i++) {
+			// ge.operators.get(i).negate();
+			// }
+			// ge.negate();
+			System.err.println("No negation for quantifiers yet");
+		} else {
 			if (ge.operators.get(0) == LogicalOperator.AND) {
 				ge.operators.set(0, LogicalOperator.OR);
 			} else if (ge.operators.get(0) == LogicalOperator.OR) {
 				ge.operators.set(0, LogicalOperator.AND);
-			}else {
+			} else {
 				System.err.println("NOOO PLEASE NO OMG STOP YOU #@$#@$!#");
 				return;
 			}
@@ -241,14 +245,15 @@ public class CNFConverter {
 		return '%';
 	}
 
-	public void skolemize(GroupExpression ge) {
-		QuantifiedExpression parent = null;
+	public void skolemize(GroupExpression ge, QuantifiedExpression tempParent) {
+		QuantifiedExpression parent = tempParent;
+		if (ge instanceof QuantifiedExpression
+				&& ((QuantifiedExpression) ge).hasUniversal()) {
+			tempParent = (QuantifiedExpression) ge;
+		}
 		for (Expression e : ge.expressions) {
 			if (e instanceof QuantifiedExpression) {
-				if (((QuantifiedExpression) e).hasUniversal()) {
-					parent = (QuantifiedExpression) e;
-				}
-				skolemize((GroupExpression) e);
+				skolemize((GroupExpression) e, tempParent);
 			}
 		}
 		if (ge instanceof QuantifiedExpression
@@ -257,9 +262,13 @@ public class CNFConverter {
 		}
 	}
 
-	private void _skolemize(QuantifiedExpression qe) {
+	private void _skolemize(QuantifiedExpression qe, QuantifiedExpression parent) {
 		Character[] symbolsE = qe.getExistentialQuantifiersSymbols();
 		Character[] symbolsA = qe.getUniversalQuantifiersSymbols();
+		qe.removeExistentialQuantifiers();
+		if (parent != null && symbolsA.length == 0) {
+			symbolsA = parent.getUniversalQuantifiersSymbols();
+		}
 		for (char c : symbolsE) {
 			for (FunctionCallExpression fe : qe.funExpressions) {
 				if (fe.hasVariable(c)) {
@@ -274,6 +283,19 @@ public class CNFConverter {
 					fe.substitute(new Variable(c), replacement);
 				}
 			}
+		}
+	}
+
+	public void removeUniversal(GroupExpression ge) {
+
+		for (Expression e : ge.expressions) {
+			if (e instanceof GroupExpression) {
+				removeUniversal((GroupExpression) e);
+			}
+		}
+
+		if (ge instanceof QuantifiedExpression) {
+			((QuantifiedExpression) ge).removeUniversalQuantifiers();
 		}
 	}
 
