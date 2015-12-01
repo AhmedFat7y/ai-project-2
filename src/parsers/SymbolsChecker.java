@@ -137,4 +137,12 @@ public class SymbolsChecker {
 		return 0;
 
 	}
+
+	public static boolean isIFF(LogicalOperator logicalOperator) {
+		return logicalOperator == LogicalOperator.IFF;
+	}
+
+	public static boolean isImplication(LogicalOperator logicalOperator) {
+		return logicalOperator == LogicalOperator.IMPLICATION;
+	}
 }

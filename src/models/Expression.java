@@ -3,8 +3,8 @@ package models;
 import enums.LogicalOperator;
 
 public abstract class Expression {
-	public LogicalOperator operator;
-	public Expression otherExpression;
+//	public LogicalOperator operator;
+//	public Expression otherExpression;
 	public boolean isNegated;
 
 	public Expression() {
@@ -16,8 +16,8 @@ public abstract class Expression {
 	}
 
 	public Expression(LogicalOperator o, Expression e, boolean isNegated) {
-		this.operator = o;
-		this.otherExpression = e;
+		// this.operator = o;
+		// this.otherExpression = e;
 		this.isNegated = isNegated;
 	}
 

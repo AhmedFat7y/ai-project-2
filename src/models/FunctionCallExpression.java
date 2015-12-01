@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import enums.LogicalOperator;
 
 public class FunctionCallExpression extends Argument {
-	
+
 	public ArrayList<Argument> arguments;
-	
+
 	public FunctionCallExpression(char symbol) {
 		super(symbol);
 		this.arguments = new ArrayList<>();
@@ -25,36 +25,35 @@ public class FunctionCallExpression extends Argument {
 	public void addArgument(Argument arg) {
 		this.arguments.add(arg);
 	}
-	
-	public boolean hasVariable(char c) {
+
+	public boolean hasVariable(Argument arg) {
 		for (Argument argument : arguments) {
-			if (argument instanceof Variable && argument.symbol == c) {
+			if (argument instanceof Variable && argument.symbol == arg.symbol) {
 				return true;
 			} else if (argument instanceof FunctionCallExpression
-					&& ((FunctionCallExpression) argument).hasVariable(c)) {
+					&& ((FunctionCallExpression) argument).hasVariable(arg)) {
 				return true;
 			}// endif
 		}// endfor
 		return false;
-	}//end hasVariable
-	
-	
-	
+	}// end hasVariable
+
 	@Override
 	public boolean match(Argument otherArgument) {
 		if (otherArgument instanceof Variable) {
-			return !this.hasVariable(otherArgument.symbol);
+			return !this.hasVariable(otherArgument);
 		} else if (otherArgument instanceof FunctionCallExpression) {
+			FunctionCallExpression otherFunction = ((FunctionCallExpression) otherArgument);
 			return this.symbol == otherArgument.symbol
-					&& this.arguments.size() == ((FunctionCallExpression) otherArgument).arguments
-							.size();
+					&& this.arguments.size() == otherFunction.arguments.size();
 		}
 		return false;
 	}// end match
 
 	// replace arg1 with arg2
 	public void substitute(Argument arg1, Argument arg2) {
-		System.out.println("replace: " + arg1 + " with: " + arg2 +" in " + this);
+		System.out.println("-------- replace: " + arg1 + " with " + arg2 + " in "
+				+ this);
 		for (int i = 0; i < arguments.size(); i++) {
 			Argument arg = arguments.get(i);
 			if (arg.equals(arg1)) {
@@ -63,11 +62,12 @@ public class FunctionCallExpression extends Argument {
 				((FunctionCallExpression) arg).substitute(arg1, arg2);
 			}
 		}
-	}//end substitute
-	
+	}// end substitute
+
 	@Override
 	public int getNumberOfChars() {
-		int result = 2 + super.getNumberOfChars() ; // for first symbol and opening paren => 'p('
+		int result = 2 + super.getNumberOfChars(); // for first symbol and
+													// opening paren => 'p('
 		// for inner arguments
 		for (Argument argument : arguments) {
 			result += argument.getNumberOfChars();
@@ -80,7 +80,6 @@ public class FunctionCallExpression extends Argument {
 		return result;
 	}// getNumberOfChars
 
-	
 	@Override
 	public String toString() {
 		String result = super.toString();
@@ -97,11 +96,25 @@ public class FunctionCallExpression extends Argument {
 
 	@Override
 	public boolean equals(Object other) {
+		if (super.equals(other)) {
+			return true;
+		}
 		if (other instanceof FunctionCallExpression) {
-			FunctionCallExpression otherFunctionCallExpression = (FunctionCallExpression) other;
-			return this.symbol == otherFunctionCallExpression.symbol;
+			FunctionCallExpression otherFExp = (FunctionCallExpression) other;
+			if (this.symbol == otherFExp.symbol
+					&& this.arguments.size() == otherFExp.arguments.size()) {
+				for (int i = 0; i < this.arguments.size(); i++) {
+					Argument arg1 = this.arguments.get(i);
+					Argument arg2 = otherFExp.arguments.get(i);
+					if (!arg1.equals(arg2)) {
+						return false;
+					}
+				}
+				return true;
+			}
+			return false;
 		}
 
 		return false;
-	}//end equals
+	}// end equals
 }

@@ -10,7 +10,6 @@ import models.QuantifiedExpression;
 public class Parser {
 
 	public static Expression parse(String str) throws Exception {
-		str = str.replace(" ", "");
 		System.out.println("Parse: " + str);
 		Expression e = null;
 		boolean negation = false;
@@ -81,7 +80,7 @@ public class Parser {
 		for (int i = 0; i < str.length() - 1; i += 2) {
 			Expression e = new EmptyExpression();
 			char first = str.charAt(i);
-//			char second = str.charAt(i + 1);
+			// char second = str.charAt(i + 1);
 			if (SymbolsChecker.isQuantifier(first)) {
 				e = parseQuantifiers(str.substring(i));
 				ge.addExpression(e);
@@ -115,7 +114,6 @@ public class Parser {
 	}
 
 	public static FunctionCallExpression parseFunctionCall(String str) {
-		str = str.replace(" ", "");
 		System.out.println("Parse Function Call: " + str);
 		if (!str.contains("(")) {
 			return null;

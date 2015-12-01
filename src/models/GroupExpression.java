@@ -30,6 +30,12 @@ public class GroupExpression extends Expression {
 		this(o, null, false);
 	}
 
+	public GroupExpression(GroupExpression ge) {
+		this.expressions = new ArrayList<>(ge.expressions);
+		this.operators = new ArrayList<>(ge.operators);
+		this.isNegated = ge.isNegated;
+	}
+
 	/**
 	 * @param o
 	 * @param e
@@ -76,4 +82,31 @@ public class GroupExpression extends Expression {
 		return result;
 	}
 
+	public boolean hasMultipleIFFs() {
+		return this.operators.indexOf(LogicalOperator.IFF) != this.operators
+				.lastIndexOf(LogicalOperator.IFF);
+	}
+
+	public int getOperatorIndex(LogicalOperator op) {
+		return this.operators.indexOf(op);
+	}
+
+	public Integer[] getOperatorIndecies(LogicalOperator op) {
+		ArrayList<Integer> indecies = new ArrayList<>();
+		for (int i = 0; i < this.operators.size(); i++) {
+			if (operators.get(i) == op) {
+				indecies.add(i);
+			}
+		}
+		return indecies.toArray(new Integer[indecies.size()]);
+	}
+
+	public Expression getExpression(int i) {
+		return this.expressions.get(i);
+	}
+
+	public void update(GroupExpression ge) {
+		this.expressions = new ArrayList<>(ge.expressions);
+		this.operators = new ArrayList<>(ge.operators);
+	}
 }

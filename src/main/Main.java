@@ -1,24 +1,12 @@
 package main;
 
+import algorithms.CNFConverter;
 import models.Expression;
 import parsers.Parser;
 
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-		// String u1 = "p(a,X,h(g(Z)))";
-		// String u2 = "p(Z,h(Y),h(Y))";
-		// FunctionCallExpression p1 = Parser.parseFunctionCall(u1);
-		// FunctionCallExpression p2 = Parser.parseFunctionCall(u2);
-		// System.out.println(p1);
-		// System.out.println("Result == Input? " + p1.toString().equals(u1));
-		// System.out.println(p2);
-		// System.out.println("Result == Input? " + p2.toString().equals(u2));
-		// Unifier u = new Unifier(p1, p2);
-		// System.out.println("Unifiable? " + u.unify());
-		// System.out.println(p1);
-		// System.out.println(p2);
-		// System.out.println(u.substitutes);
 		String cnf1 = "∃x[P(x) ∧ ∀x[Q(x)]]";
 		String cnf2 = "∀y∃x[P(x) ∧ G(y)]";
 		String cnf3 = "∃x[P(x) ∧ ∀x[Q(x) ⇒ ¬P(x)]]";
@@ -39,7 +27,14 @@ public class Main {
 		System.out.println("Input is: " + cnf4 + ", Output is: " + e4);
 		System.out.println("Are the same?: "
 				+ cnf4.replace(" ", "").equals(e4.toString()));
-
+		CNFConverter cnfC1 = new CNFConverter(e1);
+		CNFConverter cnfC2 = new CNFConverter(e2);
+		CNFConverter cnfC3 = new CNFConverter(e3);
+		CNFConverter cnfC4 = new CNFConverter(e4);
+		cnfC1.convert();
+		cnfC2.convert();
+		cnfC3.convert();
+		cnfC4.convert();
 		// System.out.println(Arrays.asList("x,g(x),g(f(a))".split("\\w[^\\(].*?,.*?[^\\)]")));
 	}
 }

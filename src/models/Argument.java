@@ -2,7 +2,7 @@ package models;
 
 import enums.LogicalOperator;
 
-public abstract class Argument extends Expression{
+public abstract class Argument extends Expression {
 
 	public char symbol;
 
@@ -16,25 +16,27 @@ public abstract class Argument extends Expression{
 		// TODO Auto-generated constructor stub
 	}
 
-	public Argument(LogicalOperator o, Expression e,
-			boolean isNegated) {
+	public Argument(LogicalOperator o, Expression e, boolean isNegated) {
 		super(o, e, isNegated);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	@Override
 	public String toString() {
 		return super.toString() + symbol;
 	}
 
 	// handle case 2, 5, 6
-	public boolean match(Argument otherArgument) {
-		return this.symbol == otherArgument.symbol;
-	}
-	
+	public abstract boolean match(Argument otherArgument);
+
 	@Override
-	public boolean equals(Object other) {
-		Argument otherArgument = (Argument) other;
-		return this.symbol == otherArgument.symbol;
+	public int hashCode() {
+		return Character.hashCode(this.symbol);
 	}
+
+	// @Override
+	// public boolean equals(Object other) {
+	// Argument otherArgument = (Argument) other;
+	// return this.symbol == otherArgument.symbol;
+	// }
 }

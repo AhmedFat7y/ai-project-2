@@ -15,27 +15,31 @@ public class Variable extends Argument {
 
 	/**
 	 * checks if otherArgument is variable then it compares symbols checks if
-	 * otherArgument is FunctionCallExpression then it checks if this FunctionCallExpression contains this
-	 * variable if it contains this variable then returns false;
+	 * otherArgument is FunctionCallExpression then it checks if this
+	 * FunctionCallExpression contains this variable if it contains this
+	 * variable then returns false;
 	 * **/
 	@Override
 	public boolean match(Argument otherArgument) {
 		if (otherArgument instanceof Variable) {
-			return super.match(otherArgument);
+			Variable otherVariable = (Variable) otherArgument;
+			return !(otherVariable.isConstant && this.isConstant && this.symbol != otherVariable.symbol);
 		} else if (otherArgument instanceof FunctionCallExpression) {
-			FunctionCallExpression p = (FunctionCallExpression) otherArgument;
-			return !p.hasVariable(symbol);
+			FunctionCallExpression fe = (FunctionCallExpression) otherArgument;
+			return !fe.hasVariable(this);
 		}
 		return false;
 	}
 
 	@Override
 	public boolean equals(Object other) {
+		if (super.equals(other)) {
+			return true;
+		}
 		if (other instanceof Variable) {
 			Variable otherVariable = (Variable) other;
 			return this.symbol == otherVariable.symbol;
 		}
-
 		return false;
 	}
 }

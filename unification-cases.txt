@@ -1,0 +1,14 @@
+3
+P(a, f(x,a)) = P(a, f(g(y), y))
+2
+x = g(a) =
+y = a
+P(x,g(x),g(f(a))) = P(f(u),v,v)
+3
+x = f(a)
+v = g(f(a))
+u = a
+f(x,g(x),x) = f(g(u),g(g(z)),z)
+0
+P(a,y,f(y)) = P(z,z,u)
+0
