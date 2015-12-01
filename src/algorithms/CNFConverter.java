@@ -124,17 +124,30 @@ public class CNFConverter {
 	}
 
 	private void _pushNegation(GroupExpression ge) {
-		if (ge.operators.get(0) == LogicalOperator.AND) {
-			ge.operators.set(0, LogicalOperator.OR);
-		} else if (ge.operators.get(0) == LogicalOperator.OR) {
-			ge.operators.set(0, LogicalOperator.AND);
-		} else {
-			System.err.println("NOOO PLEASE NO OMG STOP YOU #@$#@$!#");
-			return;
+		if (ge instanceof QuantifiedExpression) {
+			if (ge.operators.get(0) == Quantifier.THERE_EXISTS) {
+				ge.operators.set(0, Quantifier.FOR_ALL);
+			} else if(ge.operators.get(0) == Quantifier.FOR_ALL) {
+				ge.operators.set(0, Quantifier.THERE_EXISTS);
+			}
+			for (int i = 0; i < ge.operators.size; i++) {
+				ge.operators.get(i).negate();
+			}
+			ge.negate();
 		}
-		ge.expressions.get(0).negate();
-		ge.expressions.get(1).negate();
-		ge.negate();
+		else {
+			if (ge.operators.get(0) == LogicalOperator.AND) {
+				ge.operators.set(0, LogicalOperator.OR);
+			} else if (ge.operators.get(0) == LogicalOperator.OR) {
+				ge.operators.set(0, LogicalOperator.AND);
+			}else {
+				System.err.println("NOOO PLEASE NO OMG STOP YOU #@$#@$!#");
+				return;
+			}
+			ge.expressions.get(0).negate();
+			ge.expressions.get(1).negate();
+			ge.negate();
+		}
 	}
 
 	public void standardize(GroupExpression ge) {
