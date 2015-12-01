@@ -16,7 +16,10 @@ public class QuantifiedExpression extends GroupExpression {
 
 	public QuantifiedExpression(QuantifiedExpression qe) {
 		super(qe);
-		this.quantifiers = new ArrayList<>(qe.quantifiers);
+		this.quantifiers = new ArrayList<>();
+		for (QuantifierWrapper qw : qe.quantifiers) {
+			this.quantifiers.add(new QuantifierWrapper(qw));
+		}
 	}
 
 	public QuantifiedExpression(LogicalOperator o) {
@@ -69,6 +72,11 @@ public class QuantifiedExpression extends GroupExpression {
 		public Quantifier quantifier;
 		public char[] symbols;
 
+		public QuantifierWrapper(QuantifierWrapper qw) {
+			this.quantifier = qw.quantifier;
+			this.symbols = Arrays.copyOf(qw.symbols, qw.symbols.length);
+		}
+
 		public QuantifierWrapper(Quantifier q, char... c) {
 			this.quantifier = q;
 			this.symbols = c;
@@ -83,5 +91,71 @@ public class QuantifiedExpression extends GroupExpression {
 	@Override
 	public Expression shallowCopy() {
 		return new QuantifiedExpression(this);
+	}
+
+	public boolean hasExistential() {
+		for (QuantifierWrapper qw : quantifiers) {
+			if (qw.quantifier == Quantifier.THERE_EXISTS) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasUniversal() {
+		for (QuantifierWrapper qw : quantifiers) {
+			if (qw.quantifier == Quantifier.FOR_ALL) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Character[] getExistentialQuantifiersSymbols() {
+		ArrayList<Character> eq = new ArrayList<>();
+		for (int i = 0; i < quantifiers.size(); i++) {
+			QuantifierWrapper qw = quantifiers.get(i);
+			if (qw.quantifier == Quantifier.THERE_EXISTS) {
+				for (char s : qw.symbols) {
+					eq.add(s);
+				}
+			}
+		}
+		return eq.toArray(new Character[eq.size()]);
+	}
+
+	public Character[] getUniversalQuantifiersSymbols() {
+		ArrayList<Character> eq = new ArrayList<>();
+		for (int i = 0; i < quantifiers.size(); i++) {
+			QuantifierWrapper qw = quantifiers.get(i);
+			if (qw.quantifier == Quantifier.FOR_ALL) {
+				for (char s : qw.symbols) {
+					eq.add(s);
+				}
+			}
+		}
+		return eq.toArray(new Character[eq.size()]);
+	}
+
+	public Character[] getQuantifiersSymobls() {
+		ArrayList<Character> eq = new ArrayList<>();
+		for (int i = 0; i < quantifiers.size(); i++) {
+			QuantifierWrapper qw = quantifiers.get(i);
+			for (char s : qw.symbols) {
+				eq.add(s);
+			}
+		}
+		return eq.toArray(new Character[eq.size()]);
+	}
+
+	public void replaceQuantifierSymbol(char toBeReplaced, char replacement) {
+		for (int i = 0; i < quantifiers.size(); i++) {
+			QuantifierWrapper qw = quantifiers.get(i);
+			for (int j = 0; j < qw.symbols.length; j++) {
+				if (qw.symbols[j] == toBeReplaced) {
+					qw.symbols[j] = replacement;
+				}
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import enums.LogicalOperator;
 
@@ -10,7 +11,10 @@ public class FunctionCallExpression extends Argument {
 
 	public FunctionCallExpression(FunctionCallExpression fe) {
 		super(fe.symbol);
-		this.arguments = new ArrayList<>(fe.arguments);
+		this.arguments = new ArrayList<>();
+		for (Argument arg : fe.arguments) {
+			this.arguments.add((Argument) arg.shallowCopy());
+		}
 		this.isNegated = fe.isNegated;
 	}
 
@@ -33,11 +37,15 @@ public class FunctionCallExpression extends Argument {
 	}
 
 	public boolean hasVariable(Argument arg) {
+		return hasVariable(arg.symbol);
+	}// end hasVariable
+
+	public boolean hasVariable(char symbol) {
 		for (Argument argument : arguments) {
-			if (argument instanceof Variable && argument.symbol == arg.symbol) {
+			if (argument instanceof Variable && argument.symbol == symbol) {
 				return true;
 			} else if (argument instanceof FunctionCallExpression
-					&& ((FunctionCallExpression) argument).hasVariable(arg)) {
+					&& ((FunctionCallExpression) argument).hasVariable(symbol)) {
 				return true;
 			}// endif
 		}// endfor
@@ -57,15 +65,30 @@ public class FunctionCallExpression extends Argument {
 	}// end match
 
 	// replace arg1 with arg2
-	public void substitute(Argument arg1, Argument arg2) {
-		System.out.println("-------- replace: " + arg1 + " with " + arg2
-				+ " in " + this);
+	public void substitute(Argument toBeReplaced, Argument replacement) {
+		// System.out.println("-------- replace: " + toBeReplaced + " with "
+		// + replacement + " in " + this);
 		for (int i = 0; i < arguments.size(); i++) {
 			Argument arg = arguments.get(i);
-			if (arg.equals(arg1)) {
-				arguments.set(i, arg2);
+			if (arg.equals(toBeReplaced)) {
+				arguments.set(i, replacement);
 			} else if (arg instanceof FunctionCallExpression) {
-				((FunctionCallExpression) arg).substitute(arg1, arg2);
+				((FunctionCallExpression) arg).substitute(toBeReplaced,
+						replacement);
+			}
+		}
+	}// end substitute
+
+	public void substitute(char toBeReplaced, char replacement) {
+		// System.out.println("-------- replace: " + toBeReplaced + " with "
+		// + replacement + " in " + this);
+		for (int i = 0; i < arguments.size(); i++) {
+			Argument arg = arguments.get(i);
+			if (arg.symbol == toBeReplaced) {
+				arg.symbol = replacement;
+			} else if (arg instanceof FunctionCallExpression) {
+				((FunctionCallExpression) arg).substitute(toBeReplaced,
+						replacement);
 			}
 		}
 	}// end substitute
@@ -127,4 +150,18 @@ public class FunctionCallExpression extends Argument {
 	public Expression shallowCopy() {
 		return new FunctionCallExpression(this);
 	}
+
+	public Character[] getUsedChars() {
+		ArrayList<Character> usedChars = new ArrayList<>();
+		for (Argument arg : this.arguments) {
+			if (arg instanceof Variable) {
+				usedChars.add(arg.symbol);
+			} else if (arg instanceof FunctionCallExpression) {
+				usedChars.addAll(Arrays.asList(((FunctionCallExpression) arg)
+						.getUsedChars()));
+			}
+		}
+		return usedChars.toArray(new Character[0]);
+	}
+
 }

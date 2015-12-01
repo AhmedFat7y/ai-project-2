@@ -15,6 +15,8 @@ import enums.LogicalOperator;
 public class GroupExpression extends Expression {
 	public ArrayList<Expression> expressions;
 	public ArrayList<LogicalOperator> operators;
+	public ArrayList<FunctionCallExpression> funExpressions; // not to be
+																// processed
 
 	/**
 	 * 
@@ -31,7 +33,10 @@ public class GroupExpression extends Expression {
 	}
 
 	public GroupExpression(GroupExpression ge) {
-		this.expressions = new ArrayList<>(ge.expressions);
+		this.expressions = new ArrayList<>();
+		for (Expression e : ge.expressions) {
+			this.expressions.add(e.shallowCopy());
+		}
 		this.operators = new ArrayList<>(ge.operators);
 		this.isNegated = ge.isNegated;
 	}
@@ -109,10 +114,21 @@ public class GroupExpression extends Expression {
 		this.expressions = new ArrayList<>(ge.expressions);
 		this.operators = new ArrayList<>(ge.operators);
 	}
-	
+
 	@Override
 	public Expression shallowCopy() {
 		return new GroupExpression(this);
 	}
 
+	public void serialize() {
+		funExpressions = new ArrayList<>();
+		for (Expression e : this.expressions) {
+			if (e instanceof FunctionCallExpression) {
+				funExpressions.add((FunctionCallExpression) e);
+			} else if (e instanceof GroupExpression) {
+				((GroupExpression) e).serialize();
+				funExpressions.addAll(((GroupExpression) e).funExpressions);
+			}
+		}
+	}
 }

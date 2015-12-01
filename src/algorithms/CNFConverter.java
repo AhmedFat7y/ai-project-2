@@ -1,16 +1,23 @@
 package algorithms;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import models.EmptyExpression;
 import models.Expression;
 import models.FunctionCallExpression;
 import models.GroupExpression;
+import models.QuantifiedExpression;
+import models.Variable;
 import enums.LogicalOperator;
 
 public class CNFConverter {
 	public GroupExpression expression;
 	ArrayList<ArrayList<FunctionCallExpression>> cnfForm;
+	public ArrayList<Character> usedChars;
+	public HashMap<Character, Character> replacements;
 
 	public CNFConverter(Expression e) {
 		this((GroupExpression) e);
@@ -19,6 +26,7 @@ public class CNFConverter {
 	public CNFConverter(GroupExpression ge) {
 		this.expression = ge;
 		this.cnfForm = new ArrayList<>();
+		usedChars = new ArrayList<>();
 	}
 
 	public void convert() {
@@ -30,8 +38,34 @@ public class CNFConverter {
 		System.out.println("After removing IFFs: " + this.expression);
 		removeImplications(this.expression);
 		System.out.println("After removing Implications: " + this.expression);
-		pushNegation(expression);
+		pushNegation(this.expression);
 		System.out.println("After pushing negation: " + this.expression);
+		serialize(this.expression);
+		standardizeQuantifiers(this.expression);
+		System.out.println("After standardizing quantifiers: "
+				+ this.expression);
+		skolemize(this.expression);
+		System.out.println("After skolemizing: " + this.expression);
+	}
+
+	private void serialize(GroupExpression ge) {
+		ge.serialize();
+		HashSet<Character> temp = new HashSet<>();
+		for (FunctionCallExpression fe : ge.funExpressions) {
+			usedChars.addAll(Arrays.asList(fe.getUsedChars()));
+		}
+		temp.addAll(usedChars);
+		usedChars.clear();
+		usedChars.addAll(temp);
+		// System.out.println("----- Serialized: " + ge.funExpressions);
+		// System.out.println("-----  " + usedChars);
+		// GroupExpression temp = new GroupExpression();
+		// temp.addExpression(ge);
+		// for (Expression e : temp.expressions) {
+		// if (e instanceof GroupExpression) {
+		// ((QuantifiedExpression) e).serialize();
+		// }
+		// }
 	}
 
 	private void prepareExpression(GroupExpression expression) {
@@ -137,12 +171,94 @@ public class CNFConverter {
 		ge.negate();
 	}
 
-	public void standardize(GroupExpression ge) {
-		// TODO Auto-generated method stub
+	public void standardizeQuantifiers(GroupExpression ge) {
+
+		for (Expression e : ge.expressions) {
+			if (e instanceof GroupExpression) {
+				standardizeQuantifiers((GroupExpression) e);
+			}
+		}
+
+		if (ge instanceof QuantifiedExpression) {
+			QuantifiedExpression qe = (QuantifiedExpression) ge;
+			if(qe.toString().equals("∃y[¬Q(y)|¬R(y,x)]")) {
+				System.out.println("im here");
+			}
+			_standardizeQuantifiers(qe);
+		}
+	}
+
+	public void _standardizeQuantifiers(QuantifiedExpression qe) {
+		replacements = new HashMap<>();
+		Character[] symbols = qe.getQuantifiersSymobls();
+		for (char c : symbols) {
+			char replacement = getUnusedChar();
+			// System.out.println("------- " + replacement + ", " + usedChars);
+			replacements.put(c, replacement);
+		}
+
+		for (FunctionCallExpression fe : qe.funExpressions) {
+			for (char c : symbols) {
+				if (fe.hasVariable(c)) {
+					fe.substitute(c, replacements.get(c));
+				}
+			}
+		}
+		for (char c : symbols) {
+			qe.replaceQuantifierSymbol(c, replacements.get(c));
+		}
+	}
+
+	private char getUnusedChar() {
+		return getUnusuedChar(false);
+	}
+
+	private char getUnusuedChar(boolean isCapital) {
+		for (int i = 'f'; i <= 'z'; i++) {
+			Character temp = new Character((char) i);
+			if (!usedChars.contains(temp)) {
+				usedChars.add(temp);
+				if (isCapital) {
+					return Character.toUpperCase(temp);
+				} else {
+					return Character.toLowerCase(temp);
+				}
+			}
+		}
+		return '%';
 	}
 
 	public void skolemize(GroupExpression ge) {
-		// TODO Auto-generated method stub
+		for (Expression e : ge.expressions) {
+			if (e instanceof QuantifiedExpression) {
+				skolemize((GroupExpression) e);
+			}
+		}
+		if (ge instanceof QuantifiedExpression
+				&& ((QuantifiedExpression) ge).hasExistential()) {
+			_skolemize((QuantifiedExpression) ge);
+		}
+	}
+
+	private void _skolemize(QuantifiedExpression qe) {
+		Character[] symbolsE = qe.getExistentialQuantifiersSymbols();
+		Character[] symbolsA = qe.getUniversalQuantifiersSymbols();
+
+		for (char c : symbolsE) {
+			for (FunctionCallExpression fe : qe.funExpressions) {
+				if (fe.hasVariable(c)) {
+					FunctionCallExpression replacement = new FunctionCallExpression(
+							getUnusuedChar(true));
+					for (char c2 : symbolsA) {
+						replacement.addArgument(new Variable(c2));
+					}
+					if (replacement.arguments.size() == 0) {
+						replacement.addArgument(new Variable(getUnusedChar()));
+					}
+					fe.substitute(new Variable(c), replacement);
+				}
+			}
+		}
 	}
 
 	public void flatten(GroupExpression ge) {
